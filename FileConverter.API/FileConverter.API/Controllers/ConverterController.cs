@@ -18,8 +18,25 @@ namespace FileConverter.API.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
+
+
             if (file == null || file.Length == 0)
                 return BadRequest("Dosya yüklenmedi.");
+
+            // --- BU KODU YAPIŞTIR ---
+
+            // 1. Klasör yolunu belirle (Render'ın anlayacağı yol)
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
+
+            // 2. Eğer klasör yoksa OLUŞTUR (Hayat kurtaran satır!)
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // 3. Dosyayı kaydetme işlemin bundan SONRA gelsin
+            // var filePath = Path.Combine(folderPath, file.FileName);
+            // ...
 
             // 1. Dosyanın uzantısını bul (Örn: .xlsx)
             var extension = Path.GetExtension(file.FileName);

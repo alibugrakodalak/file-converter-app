@@ -3,6 +3,10 @@ using FileConverter.API.Services.Strategies;
 using FileConverter.API.Interfaces;
 using FileConverter.API.Factory;
 
+// Program.cs dosyasýnýn EN TEPESÝNE
+AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. CORS Politikasýný Tanýmla (En üste yakýn olsun)
