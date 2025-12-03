@@ -1,55 +1,43 @@
-using System.Numerics;
-using FileConverter.API.Interfaces;
 using FileConverter.API.Services;
-using QuestPDF.Infrastructure; 
-
-// Bu satýrý builder oluþturulmadan hemen önce ekle:
-QuestPDF.Settings.License = LicenseType.Community;
+using FileConverter.API.Services.Strategies;
+using FileConverter.API.Interfaces;
+using FileConverter.API.Factory;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1.Servisleri Ekleme Alaný
+// 1. CORS Politikasýný Tanýmla (En üste yakýn olsun)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()   // Kim gelirse gelsin (Vercel, Localhost vs.)
+               .AllowAnyMethod()   // GET, POST, PUT...
+               .AllowAnyHeader();  // Tüm baþlýklara izin ver
+    });
+});
+
 builder.Services.AddControllers();
-
-// Tüm Dönüþtürücü Stratejilerini Kaydet
-// --- Stratejiler ---
-builder.Services.AddScoped<IConverter, FileConverter.API.Services.Strategies.ExcelToPdfConverter>();
-builder.Services.AddScoped<IConverter, FileConverter.API.Services.Strategies.PngToJpgConverter>(); // Yeni
-builder.Services.AddScoped<IConverter, FileConverter.API.Services.Strategies.TextToZipConverter>(); // Yeni
-
-// Arka plan temizlik servisini baþlat
-builder.Services.AddHostedService<FileCleanupService>();
-
-// --- Fabrika ---
-builder.Services.AddScoped<IConverterFactory, FileConverter.API.Factory.ConverterFactory>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS Ayarý (Vue uygulamasýna izin)
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowVueApp",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173") // Vue'nun varsayýlan portu
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
+// Servislerin (Strategy Pattern & Background Service)
+builder.Services.AddScoped<IConverter, ExcelToPdfConverter>();
+builder.Services.AddScoped<IConverter, PngToJpgConverter>();
+builder.Services.AddScoped<IConverter, TextToZipConverter>();
+builder.Services.AddScoped<ConverterFactory>();
+builder.Services.AddHostedService<FileCleanupService>();
 
 var app = builder.Build();
 
-// 2.Middleware(Ara Yazýlým) Alaný
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
+// Swagger (Production'da da çalýþsýn diye if kontrolünü kaldýrdýk veya içine aldýk)
+app.UseSwagger();
 app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 
-// CORS'u aktif et (Authorization'dan ÖNCE olmalý)
-app.UseCors("AllowVueApp");
+// 2. CORS'u Aktif Et (Tam olarak burada olmalý!)
+// UseRouting'den SONRA, UseAuthorization'dan ÖNCE
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
