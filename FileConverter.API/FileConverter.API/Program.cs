@@ -4,6 +4,9 @@ using FileConverter.API.Interfaces;
 using FileConverter.API.Factory;
 using System.Text; // <-- 1. BU KÜTÜPHANEYÝ EKLEDÝK
 
+// ...
+AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+
 // 2. Linux Grafik Ýzni (Zaten vardý, dursun)
 AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
 
