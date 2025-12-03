@@ -3,14 +3,13 @@ using FileConverter.API.Services.Strategies;
 using FileConverter.API.Interfaces;
 using FileConverter.API.Factory;
 using System.Text; // <-- 1. BU KÜTÜPHANEYÝ EKLEDÝK
+using QuestPDF.Infrastructure; // <-- 1. BU EKLENECEK
 
-// ...
+// 2. QuestPDF LÝSANS AYARI (BU OLMAZSA ÇALIÞMAZ!)
+QuestPDF.Settings.License = LicenseType.Community;
+
+// 3. Linux Ayarlarý (Bunlar zaten vardý, kalsýn)
 AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
-
-// 2. Linux Grafik Ýzni (Zaten vardý, dursun)
-AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
-
-// 3. ÝÞTE BU EKSÝKTÝ: Excel için Karakter Seti Ýzni (Linux için ÞART!)
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
 var builder = WebApplication.CreateBuilder(args);
