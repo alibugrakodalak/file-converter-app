@@ -1,0 +1,9 @@
+﻿.vs/
+bin/
+obj/
+node_modules/
+*.user
+*.pdb
+.DS_Store
+dist/
+out/
