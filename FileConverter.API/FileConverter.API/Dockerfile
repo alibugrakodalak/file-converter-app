@@ -1,4 +1,16 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+# --- EKLENECEK KISIM BAŞLANGICI ---
+# Linux için gerekli grafik kütüphanesini yüklüyoruz
+RUN apt-get update && apt-get install -y libgdiplus
+# --- EKLENECEK KISIM SONU ---
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# ... (dosyanın geri kalanı aynı kalsın)
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY *.csproj ./
 RUN dotnet restore
